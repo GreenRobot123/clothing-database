@@ -1,20 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./profile.scss";
 import Form from "devextreme-react/form";
+import { useAuth } from "../../contexts/auth";
 
 export default function Profile() {
-  const [notes, setNotes] = useState("About Me.");
-  const employee = {
-    ID: 7,
-    FirstName: "Sandra",
-    LastName: "Johnson",
-    Prefix: "Mrs.",
-    Position: "Controller",
-    Picture: "images/employees/06.png",
-    BirthDate: new Date("1974/11/5"),
-    HireDate: new Date("2005/05/11"),
-    Notes: notes,
-    Address: "4600 N Virginia Rd.",
+  const { user, setUser } = useAuth();
+  const isInitialRender = useRef(true);
+
+  const initialData = {
+    notes: "About Me.",
+    firstName: "Sandra",
+    lastName: "Johnson",
+    prefix: "Mrs.",
+    position: "Controller",
+    address: "4600 N Virginia Rd.",
+    picture: user
+      ? user.avatarUrl
+      : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  };
+
+  const [formData, setFormData] = useState({ ...initialData });
+
+  useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+
+    setUser(formData);
+  }, [formData, setUser]);
+
+  const onFieldDataChanged = (e) => {
+    setFormData((prevData) => ({ ...prevData, [e.dataField]: e.value }));
+    console.log(user);
   };
 
   return (
@@ -23,21 +41,16 @@ export default function Profile() {
 
       <div className={"content-block dx-card responsive-paddings"}>
         <div className={"form-avatar"}>
-          <img
-            alt={""}
-            src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png`}
-          />
+          <img alt={""} src={formData.picture} />
         </div>
-        <span>{notes}</span>
+        <span>{formData.notes}</span>
       </div>
 
       <div className={"content-block dx-card responsive-paddings"}>
         <Form
           id={"form"}
-          defaultFormData={employee}
-          onFieldDataChanged={(e) =>
-            e.dataField === "Notes" && setNotes(e.value)
-          }
+          formData={formData}
+          onFieldDataChanged={onFieldDataChanged}
           labelLocation={"top"}
           colCountByScreen={colCountByScreen}
         />
