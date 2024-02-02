@@ -14,17 +14,18 @@ export default function Profile() {
     email: "sandra@example.com",
     password: "hashedPassword",
     avatar_url: user
-      ? user.avatarUrl
+      ? user.avatar_url
       : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    date_of_birth: "1990-01-01",
+    date_of_birth: new Date(),
     address: "4600 N Virginia Rd.",
-    phone_number: "123-456-7890",
-    creation_date: new Date().toISOString(),
+    phone_number: "1234567890",
+    creationDate: new Date(),
     last_login_date: null,
     role: "user",
   };
 
   const [formData, setFormData] = useState({ ...initialData });
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     if (isInitialRender.current) {
@@ -35,43 +36,104 @@ export default function Profile() {
     setUser(formData);
   }, [formData, setUser]);
 
-  const onFieldDataChanged = (e) => {
-    setFormData((prevData) => ({ ...prevData, [e.dataField]: e.value }));
-  };
+  const getUserData = useCallback(
+    async (userId) => {
+      try {
+        const response = await fetch(
+          `http://localhost:3002/user_data/${userId}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-  const getUserData = useCallback(() => {
-    fetch("http://localhost:3002/user")
-      .then((response) => response.json())
-      .then((data) => {
+        const data = await response.json();
         console.log("API Response:", data);
         setUser((prevUser) => ({
           ...prevUser,
           ...data,
         }));
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching user data:", error);
-      });
-  }, [setUser]);
+      }
+    },
+    [setUser]
+  );
 
-  const updateUser = useCallback(() => {
-    fetch("http://localhost:3002/user", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        console.log(data);
-        alert(data);
-        getUserData();
-      })
-      .catch((error) => {
-        console.error("Error updating user:", error);
+  const onFieldDataChanged = (e) => {
+    setFormData((prevData) => ({ ...prevData, [e.dataField]: e.value }));
+  };
+
+  const checkUserByEmail = async () => {
+    const emailToCheck = formData.email;
+
+    try {
+      const response = await fetch("http://localhost:3002");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const userData = await response.json();
+      const existingUser = userData.find((user) => user.email === emailToCheck);
+
+      if (existingUser) {
+        console.log("User found. Performing update...");
+        await updateUser(existingUser.user_id, formData);
+      } else {
+        console.log("User not found. Performing insert...");
+        await insertUser(formData);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const updateUser = async (userId, updatedData) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3002/user_data/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+      if (response.ok) {
+        console.log("User updated successfully!");
+        getUserData(userId);
+      } else {
+        console.error("Failed to update user.");
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
+  const insertUser = async (newUserData) => {
+    try {
+      const response = await fetch("http://localhost:3002/user_data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUserData),
       });
-  }, [getUserData, formData]);
+
+      if (response.ok) {
+        console.log("New user inserted successfully!");
+      } else {
+        console.error("Failed to insert new user.");
+      }
+    } catch (error) {
+      console.error("Error inserting new user:", error);
+    }
+  };
+
+  const handleUpdate = () => {
+    console.log("Checking user by email before updating...");
+    checkUserByEmail();
+  };
 
   return (
     <React.Fragment>
@@ -79,7 +141,7 @@ export default function Profile() {
 
       <div className={"content-block dx-card responsive-paddings"}>
         <div className={"form-avatar"}>
-          <img alt={""} src={formData.picture} />
+          <img alt={""} src={formData.avatar_url} />
         </div>
         <span>{formData.notes}</span>
       </div>
@@ -92,7 +154,7 @@ export default function Profile() {
           labelLocation={"top"}
           colCountByScreen={colCountByScreen}
         />
-        <button onClick={updateUser}>Update User</button>
+        <button onClick={handleUpdate}>Update User</button>
       </div>
     </React.Fragment>
   );

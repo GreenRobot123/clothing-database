@@ -27,6 +27,30 @@ const getUserData = async () => {
   }
 };
 
+const getUserDataById = async (UserID) => {
+  try {
+    return await new Promise(function (resolve, reject) {
+      pool.query(
+        "SELECT * FROM user_data WHERE user_id = $1",
+        [UserID],
+        (error, results) => {
+          if (error) {
+            reject(error);
+          }
+          if (results && results.rows.length > 0) {
+            resolve(results.rows[0]);
+          } else {
+            reject(new Error("No user found"));
+          }
+        }
+      );
+    });
+  } catch (error_1) {
+    console.error(error_1);
+    throw new Error("Internal server error");
+  }
+};
+
 const addUser = (body) => {
   return new Promise(function (resolve, reject) {
     const {
@@ -91,8 +115,8 @@ const deleteUser = (id) => {
   });
 };
 
-const updateUser = (id, body) => {
-  return new Promise(function (resolve, reject) {
+const updateUser = async (id, body) => {
+  try {
     const {
       first_name,
       last_name,
@@ -107,7 +131,8 @@ const updateUser = (id, body) => {
       last_login_date,
       role,
     } = body;
-    pool.query(
+
+    const results = await pool.query(
       "UPDATE user_data SET first_name = $1, last_name = $2, email = $3, password = $4, avatar_url = $5, date_of_birth = $6, address = $7, phone_number = $8, notes = $9, creation_date = $10, last_login_date = $11, role = $12 WHERE user_id = $13 RETURNING *",
       [
         first_name,
@@ -123,23 +148,23 @@ const updateUser = (id, body) => {
         last_login_date,
         role,
         id,
-      ],
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(`User updated: ${JSON.stringify(results.rows[0])}`);
-        } else {
-          reject(new Error("No results found"));
-        }
-      }
+      ]
     );
-  });
+
+    if (results && results.rows) {
+      return `User updated: ${JSON.stringify(results.rows[0])}`;
+    } else {
+      throw new Error("No results found");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 module.exports = {
   getUserData,
+  getUserDataById,
   addUser,
   deleteUser,
   updateUser,
