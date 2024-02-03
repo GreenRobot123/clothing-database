@@ -8,9 +8,9 @@ export default function Profile() {
   const isInitialRender = useRef(true);
 
   const initialData = {
-    notes: "About Me.",
-    first_name: "Sandra",
-    last_name: "Johnson",
+    notes: "I am very cool",
+    first_name: "Cool",
+    last_name: "Guy",
     email: "sandra@example.com",
     password: "hashedPassword",
     avatar_url: user
@@ -20,12 +20,9 @@ export default function Profile() {
     address: "4600 N Virginia Rd.",
     phone_number: "1234567890",
     creationDate: new Date(),
-    last_login_date: null,
-    role: "user",
   };
 
   const [formData, setFormData] = useState({ ...initialData });
-  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     if (isInitialRender.current) {
@@ -154,7 +151,21 @@ export default function Profile() {
           labelLocation={"top"}
           colCountByScreen={colCountByScreen}
         />
-        <button onClick={handleUpdate}>Update User</button>
+        <button
+          style={{
+            backgroundColor: "#4CAF50",
+            color: "white",
+            padding: "10px 15px",
+            marginTop: "10px",
+            borderRadius: "5px",
+            cursor: "pointer",
+            border: "none",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
+          onClick={handleUpdate}
+        >
+          Update User
+        </button>
       </div>
     </React.Fragment>
   );

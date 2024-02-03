@@ -1,19 +1,23 @@
-import defaultUser from '../utils/default-user';
+import defaultUser from "../utils/default-user";
+
+let authenticatedUser = undefined;
+// get autheticatedUser from localStorage if rememberpassword was set
 
 export async function signIn(email, password) {
   try {
     // Send request
     console.log(email, password);
 
+    authenticatedUser = defaultUser;
+
     return {
       isOk: true,
-      data: defaultUser
+      data: authenticatedUser,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Authentication failed"
+      message: "Authentication failed",
     };
   }
 }
@@ -24,12 +28,11 @@ export async function getUser() {
 
     return {
       isOk: true,
-      data: defaultUser
+      data: authenticatedUser,
     };
-  }
-  catch {
+  } catch {
     return {
-      isOk: false
+      isOk: false,
     };
   }
 }
@@ -40,13 +43,12 @@ export async function createAccount(email, password) {
     console.log(email, password);
 
     return {
-      isOk: true
+      isOk: true,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Failed to create account"
+      message: "Failed to create account",
     };
   }
 }
@@ -57,14 +59,13 @@ export async function changePassword(email, recoveryCode) {
     console.log(email, recoveryCode);
 
     return {
-      isOk: true
+      isOk: true,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Failed to change password"
-    }
+      message: "Failed to change password",
+    };
   }
 }
 
@@ -74,13 +75,12 @@ export async function resetPassword(email) {
     console.log(email);
 
     return {
-      isOk: true
+      isOk: true,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Failed to reset password"
+      message: "Failed to reset password",
     };
   }
 }

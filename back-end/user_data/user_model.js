@@ -7,6 +7,9 @@ const pool = new Pool({
   port: 5432,
 });
 
+const role = "user";
+const last_login_date = new Date();
+
 const getUserData = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -64,8 +67,6 @@ const addUser = (body) => {
       phone_number,
       notes,
       creation_date,
-      last_login_date,
-      role,
     } = body;
     pool.query(
       "INSERT INTO user_data (first_name, last_name, email, password, avatar_url, date_of_birth, address, phone_number, notes, creation_date, last_login_date, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
@@ -128,8 +129,6 @@ const updateUser = async (id, body) => {
       phone_number,
       notes,
       creation_date,
-      last_login_date,
-      role,
     } = body;
 
     const results = await pool.query(
