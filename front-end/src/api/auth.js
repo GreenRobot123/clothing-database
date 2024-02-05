@@ -1,7 +1,18 @@
 import defaultUser from "../utils/default-user";
 
 let authenticatedUser = undefined;
-// get autheticatedUser from localStorage if rememberpassword was set
+
+async function fetchData(email) {
+  try {
+    const userDataResponse = await fetch(
+      `http://localhost:3002/user_email/${email}`
+    );
+    const currentData = await userDataResponse.json();
+    return currentData;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  }
+}
 
 export async function signIn(email, password) {
   try {
@@ -38,7 +49,14 @@ export async function signIn(email, password) {
 
 export async function getUser() {
   try {
-    // Send request
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    const rememberedPassword = localStorage.getItem("rememberedPassword");
+    if (rememberedEmail && rememberedPassword) {
+      const currentData = await fetchData(rememberedEmail);
+      authenticatedUser = {
+        ...currentData,
+      };
+    }
 
     return {
       isOk: true,
@@ -121,7 +139,6 @@ export async function changePassword(email, recoveryCode) {
 
 export async function resetPassword(email) {
   try {
-    // Send request
     console.log(email);
 
     return {

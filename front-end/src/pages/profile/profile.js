@@ -19,7 +19,6 @@ export default function Profile() {
     address: "",
     phone_number: "",
   };
-
   const [formData, setFormData] = useState({
     notes: user?.notes ?? initialData.notes,
     first_name: user?.first_name ?? initialData.first_name,

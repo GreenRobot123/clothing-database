@@ -18,12 +18,12 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const { setUser, signIn } = useAuth();
   const [loading, setLoading] = useState(false);
-  const formData = useRef({ email: "", password: "" });
+  const formData = useRef({ email: "", password: "", rememberMe: false });
 
   const onSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      const { email, password } = formData.current;
+      const { email, password, rememberMe } = formData.current;
       setUser();
       setLoading(true);
 
@@ -31,6 +31,15 @@ export default function LoginForm() {
       if (!result.isOk) {
         setLoading(false);
         notify(result.message, "error", 2000);
+      }
+      if (result.isOk) {
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+          localStorage.setItem("rememberedPassword", password);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
+        }
       }
     },
     [signIn]
