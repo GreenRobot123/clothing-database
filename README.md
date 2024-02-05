@@ -14,7 +14,7 @@ _Clothing Database UI_ enables users to explore, add, view, and manage clothing 
 
 - **Drawer:** Access additional features effortlessly via the intuitive side navigation drawer.
 
-- **Pie Chart:** To Highligh certain data
+- **Pie Chart:** Gain valuable insights into your data through a visually appealing **Pie Chart**. Highlighting specific data, this feature provides a dynamic and intuitive way to understand key trends and patterns within your clothing database.
 
 ## Getting Started
 
