@@ -42,7 +42,7 @@ export default function LoginForm() {
         }
       }
     },
-    [signIn]
+    [signIn, setUser]
   );
 
   const onCreateAccountClick = useCallback(() => {

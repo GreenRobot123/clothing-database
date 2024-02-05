@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import "./profile.scss";
 import Form from "devextreme-react/form";
 import { useAuth } from "../../contexts/auth";

@@ -37,7 +37,7 @@ export default function Home() {
 
   useEffect(() => {
     getClothes();
-  }, []);
+  }, [getClothes]);
 
   const customizeText = (pointInfo) => {
     return `${pointInfo.valueText} (${pointInfo.percentText})`;
