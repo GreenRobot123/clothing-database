@@ -157,12 +157,17 @@ export default function Task() {
         <Pager showPageSizeSelector={true} showInfo={true} />
         <FilterRow visible={true} />
 
-        <Column dataField={"clothes_id"} caption={"ID"} width={100} />
-        <Column dataField={"name"} caption={"Name"} />
-        <Column dataField={"color"} caption={"Color"} />
-        <Column dataField={"size"} caption={"Size"} />
-        <Column dataField={"stock"} caption={"Stock"} />
-        <Column dataField={"price"} caption={"Price"} />
+        <Column
+          dataField={"clothes_id"}
+          caption={"ID"}
+          width={50}
+          hidingPriority={5}
+        />
+        <Column dataField={"name"} caption={"Name"} hidingPriority={6} />
+        <Column dataField={"color"} caption={"Color"} hidingPriority={4} />
+        <Column dataField={"size"} caption={"Size"} hidingPriority={3} />
+        <Column dataField={"stock"} caption={"Stock"} hidingPriority={2} />
+        <Column dataField={"price"} caption={"Price"} hidingPriority={1} />
       </DataGrid>
     </React.Fragment>
   );

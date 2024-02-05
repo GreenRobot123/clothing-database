@@ -5,19 +5,33 @@ let authenticatedUser = undefined;
 
 export async function signIn(email, password) {
   try {
-    // Send request
-    console.log(email, password);
+    const emailCheckResponse = await fetch(
+      `http://localhost:3002/check_email/${email}`
+    );
 
-    authenticatedUser = defaultUser;
+    if (!emailCheckResponse.ok) {
+      throw new Error(`Email not found! Please create a new account`);
+    }
+
+    const userDataResponse = await fetch(
+      `http://localhost:3002/user_email/${email}`
+    );
+    const userData = await userDataResponse.json();
+
+    if (userData.password !== password) {
+      throw new Error("Incorrect password");
+    }
+
+    authenticatedUser = userData;
 
     return {
       isOk: true,
       data: authenticatedUser,
     };
-  } catch {
+  } catch (error) {
     return {
       isOk: false,
-      message: "Authentication failed",
+      message: `Authentication failed: ${error.message}`,
     };
   }
 }
@@ -39,16 +53,52 @@ export async function getUser() {
 
 export async function createAccount(email, password) {
   try {
-    // Send request
-    console.log(email, password);
+    // Send request to check if email already exists
+    const emailCheckResponse = await fetch(
+      `http://localhost:3002/check_email/${email}`
+    );
+
+    if (emailCheckResponse.ok) {
+      throw new Error(`Same email found! Please use another email`);
+    }
+
+    const userData = {
+      email: email,
+      password: password,
+      creation_date: new Date(),
+    };
+
+    authenticatedUser = {
+      ...defaultUser,
+      ...userData,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3002/user_data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(authenticatedUser),
+      });
+
+      if (response.ok) {
+        console.log("New user inserted successfully!");
+      } else {
+        console.error("Failed to insert new user.");
+      }
+    } catch (error) {
+      console.error("Error inserting new user:", error);
+    }
 
     return {
       isOk: true,
+      data: authenticatedUser,
     };
-  } catch {
+  } catch (error) {
     return {
       isOk: false,
-      message: "Failed to create account",
+      message: `Authentication failed: ${error.message}`,
     };
   }
 }

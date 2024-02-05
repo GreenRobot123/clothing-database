@@ -91,6 +91,38 @@ app.put("/user_data/:id", (req, res) => {
     });
 });
 
+app.get("/check_email/:email", (req, res) => {
+  const emailToCheck = req.params.email;
+
+  user_model
+    .checkEmailExists(emailToCheck)
+    .then((exists) => {
+      res.json({ exists });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      res.status(500).send(error);
+    });
+});
+
+app.get("/user_email/:email", (req, res) => {
+  const email = req.params.email;
+
+  user_model
+    .getUserByEmail(email)
+    .then((response) => {
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });

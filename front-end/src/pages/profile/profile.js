@@ -2,36 +2,36 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./profile.scss";
 import Form from "devextreme-react/form";
 import { useAuth } from "../../contexts/auth";
+import { Button } from "devextreme-react/button";
+import notify from "devextreme/ui/notify";
 
 export default function Profile() {
   const { user, setUser } = useAuth();
-  const isInitialRender = useRef(true);
 
   const initialData = {
-    notes: "I am very cool",
-    first_name: "Cool",
-    last_name: "Guy",
-    email: "sandra@example.com",
-    password: "hashedPassword",
+    notes: "",
+    first_name: "",
+    last_name: "",
     avatar_url: user
       ? user.avatar_url
       : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
     date_of_birth: new Date(),
-    address: "4600 N Virginia Rd.",
-    phone_number: "1234567890",
-    creationDate: new Date(),
+    address: "",
+    phone_number: "",
   };
 
-  const [formData, setFormData] = useState({ ...initialData });
-
-  useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-      return;
-    }
-
-    setUser(formData);
-  }, [formData, setUser]);
+  const [formData, setFormData] = useState({
+    notes: user?.notes ?? initialData.notes,
+    first_name: user?.first_name ?? initialData.first_name,
+    last_name: user?.last_name ?? initialData.last_name,
+    avatar_url: user?.avatar_url ?? initialData.avatar_url,
+    date_of_birth: user?.date_of_birth ?? initialData.date_of_birth,
+    address: user?.address ?? initialData.address,
+    phone_number: user?.phone_number ?? initialData.phone_number,
+    email: user.email,
+    password: user.password,
+    creation_date: user.creation_date,
+  });
 
   const getUserData = useCallback(
     async (userId) => {
@@ -44,7 +44,6 @@ export default function Profile() {
         }
 
         const data = await response.json();
-        console.log("API Response:", data);
         setUser((prevUser) => ({
           ...prevUser,
           ...data,
@@ -60,30 +59,6 @@ export default function Profile() {
     setFormData((prevData) => ({ ...prevData, [e.dataField]: e.value }));
   };
 
-  const checkUserByEmail = async () => {
-    const emailToCheck = formData.email;
-
-    try {
-      const response = await fetch("http://localhost:3002");
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const userData = await response.json();
-      const existingUser = userData.find((user) => user.email === emailToCheck);
-
-      if (existingUser) {
-        console.log("User found. Performing update...");
-        await updateUser(existingUser.user_id, formData);
-      } else {
-        console.log("User not found. Performing insert...");
-        await insertUser(formData);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
   const updateUser = async (userId, updatedData) => {
     try {
       const response = await fetch(
@@ -97,7 +72,6 @@ export default function Profile() {
         }
       );
       if (response.ok) {
-        console.log("User updated successfully!");
         getUserData(userId);
       } else {
         console.error("Failed to update user.");
@@ -107,30 +81,42 @@ export default function Profile() {
     }
   };
 
-  const insertUser = async (newUserData) => {
+  const handleUpdate = async () => {
     try {
-      const response = await fetch("http://localhost:3002/user_data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUserData),
-      });
+      const emailToCheck = user ? user.email : "";
 
-      if (response.ok) {
-        console.log("New user inserted successfully!");
+      if (emailToCheck) {
+        const response = await fetch(
+          `http://localhost:3002/user_email/${emailToCheck}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const userData = await response.json();
+
+        if (userData) {
+          const userId = userData.user_id;
+          await updateUser(userId, formData);
+          notify(`The User Was Updated `);
+        } else {
+          console.log("User not found.");
+        }
       } else {
-        console.error("Failed to insert new user.");
+        console.error("User email not available in authentication context.");
       }
     } catch (error) {
-      console.error("Error inserting new user:", error);
+      console.error("Error handling update:", error);
     }
   };
 
-  const handleUpdate = () => {
-    console.log("Checking user by email before updating...");
-    checkUserByEmail();
-  };
+  const formDisplayData = Object.fromEntries(
+    Object.entries(formData).filter(
+      ([key]) =>
+        key !== "email" && key !== "password" && key !== "creation_date"
+    )
+  );
 
   return (
     <React.Fragment>
@@ -146,26 +132,23 @@ export default function Profile() {
       <div className={"content-block dx-card responsive-paddings"}>
         <Form
           id={"form"}
-          formData={formData}
+          formData={formDisplayData}
           onFieldDataChanged={onFieldDataChanged}
           labelLocation={"top"}
           colCountByScreen={colCountByScreen}
         />
-        <button
+        <Button
+          type="normal"
+          stylingMode="contained"
           style={{
-            backgroundColor: "#4CAF50",
-            color: "white",
-            padding: "10px 15px",
+            backgroundColor: "rgb(3, 169, 244)",
+            color: "rgb(255, 255, 255)",
             marginTop: "10px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            border: "none",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           }}
           onClick={handleUpdate}
         >
           Update User
-        </button>
+        </Button>
       </div>
     </React.Fragment>
   );

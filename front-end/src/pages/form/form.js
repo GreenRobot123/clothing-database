@@ -2,10 +2,19 @@ import React, { useCallback, useState } from "react";
 import "./form.scss";
 import { Form, SimpleItem, ButtonItem } from "devextreme-react/form";
 import { getClothes, getSize } from "../data.js";
+import notify from "devextreme/ui/notify";
 
 const new_clothes = getClothes();
 
 const submitButtonOptions = {
+  stylingMode: "contained",
+  elementAttr: {
+    style: {
+      backgroundColor: "rgb(3, 169, 244)",
+      color: "rgb(255, 255, 255)",
+      marginTop: 40 + "px",
+    },
+  },
   text: "ADD",
   useSubmitBehavior: true,
 };
@@ -82,7 +91,7 @@ const App = () => {
         .then((response) => response.text())
         .then((data) => {
           console.log(data);
-          alert(data);
+          notify(`The User Was Added `);
           getClothes();
         })
         .catch((error) => {

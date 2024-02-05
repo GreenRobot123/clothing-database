@@ -16,7 +16,7 @@ import "./LoginForm.scss";
 
 export default function LoginForm() {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { setUser, signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const formData = useRef({ email: "", password: "" });
 
@@ -24,6 +24,7 @@ export default function LoginForm() {
     async (e) => {
       e.preventDefault();
       const { email, password } = formData.current;
+      setUser();
       setLoading(true);
 
       const result = await signIn(email, password);

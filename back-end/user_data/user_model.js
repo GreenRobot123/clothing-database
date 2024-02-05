@@ -10,6 +10,16 @@ const pool = new Pool({
 const role = "user";
 const last_login_date = new Date();
 
+async function checkEmailExists(email) {
+  try {
+    const userWithEmail = await getUserByEmail(email);
+
+    return userWithEmail !== null;
+  } catch (error) {
+    throw error;
+  }
+}
+
 const getUserData = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -54,13 +64,31 @@ const getUserDataById = async (UserID) => {
   }
 };
 
+const getUserByEmail = async (email) => {
+  try {
+    const results = await pool.query(
+      "SELECT * FROM user_data WHERE email = $1",
+      [email]
+    );
+
+    if (results.rows.length > 0) {
+      return results.rows[0];
+    } else {
+      throw new Error("No user found");
+    }
+  } catch (error) {
+    console.error("Error executing query:", error);
+    throw new Error("Internal server error");
+  }
+};
+
 const addUser = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       first_name,
       last_name,
-      email,
       password,
+      email,
       avatar_url,
       date_of_birth,
       address,
@@ -167,4 +195,6 @@ module.exports = {
   addUser,
   deleteUser,
   updateUser,
+  checkEmailExists,
+  getUserByEmail,
 };
