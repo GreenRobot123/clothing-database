@@ -91,7 +91,7 @@ const App = () => {
         .then((response) => response.text())
         .then((data) => {
           console.log(data);
-          notify(`The User Was Added `);
+          notify(`Added`);
           getClothes();
         })
         .catch((error) => {
