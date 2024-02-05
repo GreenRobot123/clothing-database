@@ -1,70 +1,106 @@
-# Getting Started with Create React App
+# Clothing Database UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Clothing Database UI** is a sophisticated web application designed to effortlessly manage your clothing data. Built with _Create React App_ and _DevExtreme CLI_, this modern solution offers an elegant user interface and robust components such as _DataGrid_, _Form_, and _Drawer_ for seamless clothing data management.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+_Clothing Database UI_ enables users to explore, add, view, and manage clothing data efficiently. The application is equipped with key features to enhance user experience.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **DataGrid:** Effortlessly explore your clothing collection through a sophisticated table, showcasing essential details such as name, price, stock, size, id, and color.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Form:** Add new clothing items seamlessly using a user-friendly input form.
 
-### `npm test`
+- **Drawer:** Access additional features effortlessly via the intuitive side navigation drawer.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Pie Chart:** To Highligh certain data
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This project utilizes PostgreSQL for database management. Please note that the website does not grant access to any database other than the one specified. To set up the database, follow these steps:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Create a PostgreSQL database with the necessary tables.
 
-### `npm run eject`
+   ```sql
+   CREATE TABLE clothes (
+       clothes_id SERIAL PRIMARY KEY,
+       name VARCHAR(255) NOT NULL,
+       color VARCHAR(50) NOT NULL,
+       size VARCHAR(10) NOT NULL,
+       stock INT DEFAULT 0 NOT NULL,
+       price DECIMAL(10, 2) NOT NULL
+   );
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   CREATE TABLE user_data (
+       user_id SERIAL PRIMARY KEY,
+       first_name VARCHAR(50),
+       last_name VARCHAR(50),
+       email VARCHAR(100) NOT NULL UNIQUE,
+       password VARCHAR(255),
+       avatar_url VARCHAR(255),
+       date_of_birth DATE,
+       address VARCHAR(255),
+       phone_number VARCHAR(20),
+       notes TEXT,
+       creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       last_login_date TIMESTAMP,
+       role VARCHAR(20)
+   );
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **Installation:**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   ```bash
+   npm install
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Running the Website
 
-## Learn More
+To have the application up and running, follow these steps:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Navigate to `back-end/clothing` and run `npm start`.
+2. Open another terminal, go to `back-end/user_data`, and run `npm start`.
+3. Finally, open another terminal, navigate to `front-end`, and run `npm start`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Explore, manage, and enjoy the enhanced experience of handling your clothing data effortlessly.
 
-### Code Splitting
+## Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Sign In
 
-### Analyzing the Bundle Size
+The **Sign In** feature provides a secure and straightforward authentication process for users. Easily access your clothing database by entering your credentials, ensuring a personalized and protected user experience.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Remember Me
 
-### Making a Progressive Web App
+With the **Remember Me** functionality, the application enhances user convenience by allowing the system to remember login credentials. This feature ensures a seamless experience, reducing the need for repeated login procedures.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Home Page
 
-### Advanced Configuration
+The **Home Page** serves as the central hub for navigating and managing your clothing database. Access key information at a glance, explore recent updates, and seamlessly move between different sections of the application.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Updating Profile
 
-### Deployment
+The **Updating Profile** feature empowers users to maintain accurate and current personal information. Easily modify details such as name, contact information, and other profile attributes, ensuring your user profile remains up-to-date.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Clothes Data (Removing and Editing)
 
-### `npm run build` fails to minify
+Effortlessly manage your clothing data with the ability to Remove and Edit entries. Ensure accuracy and relevance by editing existing information or remove outdated entries. This feature provides flexibility and control over your clothing database.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Adding New Clothes
+
+The **Adding New Clothes** feature streamlines the process of expanding your clothing collection. Access a user-friendly input form to effortlessly add details for new clothing items. Enhance your database with the latest additions to your wardrobe, ensuring a comprehensive and up-to-date collection.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgements
+
+- DevExtreme for providing powerful UI components.
+- Create React App for simplifying the React setup.
+- Appreciation to our contributors and users!
+
+Thank you for looking at Clothing Database UI. This Project aims to simplify your clothing management tasks while offering an enjoyable user experience.

@@ -39,7 +39,9 @@ export default function UserPanel({ menuMode }) {
             className={"user-image"}
           />
         </div>
-        <div className={"user-name"}>{user.email}</div>
+        <div className={"user-name"}>
+          {user.first_name ? user.first_name : user.email}
+        </div>
       </div>
 
       {menuMode === "context" && (

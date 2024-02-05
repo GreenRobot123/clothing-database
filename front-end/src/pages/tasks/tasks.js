@@ -41,7 +41,6 @@ export default function Task() {
         .then((response) => response.text())
         .then((data) => {
           console.log(data);
-          alert(data);
           getClothes();
         })
         .catch((error) => {
@@ -63,7 +62,6 @@ export default function Task() {
         .then((response) => response.text())
         .then((result) => {
           console.log(result);
-          alert(result);
           getClothes();
         })
         .catch((error) => {
