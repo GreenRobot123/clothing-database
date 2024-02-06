@@ -1,90 +1,79 @@
-const Pool = require("pg").Pool;
+const { Pool } = require("pg");
+
+const connectionString =
+  "postgres://untimaug:VQdB62E2JcmSt0SJh5jHfZWt02sLueXO@rosie.db.elephantsql.com/untimaug";
+
 const pool = new Pool({
-  user: "my_user",
-  host: "localhost",
-  database: "clothing_database",
-  password: "root",
-  port: 5432,
+  connectionString: connectionString,
+  max: 20,
 });
 
 const getClothesData = async () => {
+  let client;
   try {
-    return await new Promise(function (resolve, reject) {
-      pool.query("SELECT * FROM clothes", (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(results.rows);
-        } else {
-          reject(new Error("No results found"));
-        }
-      });
-    });
-  } catch (error_1) {
-    console.error(error_1);
+    client = await pool.connect();
+    const results = await client.query("SELECT * FROM clothes");
+    return results.rows;
+  } catch (error) {
+    console.error(error);
     throw new Error("Internal server error");
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 };
 
 const addClothes = (body) => {
-  return new Promise(function (resolve, reject) {
-    const { name, color, size, stock, price } = body;
-    pool.query(
-      "INSERT INTO clothes (name, color, size, stock, price) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [name, color, size, stock, price],
-      (error, results) => {
-        if (error) {
-          console.error(error);
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(
-            `A new article of clothing has been added: ${JSON.stringify(
-              results.rows[0]
-            )}`
-          );
-        } else {
-          reject(new Error("No results found"));
-        }
-      }
-    );
-  });
+  const { name, color, size, stock, price } = body;
+  const query =
+    "INSERT INTO clothes (name, color, size, stock, price) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+  const values = [name, color, size, stock, price];
+  let client;
+
+  return pool
+    .query(query, values)
+    .then((results) => {
+      return `A new article of clothing has been added: ${JSON.stringify(
+        results.rows[0]
+      )}`;
+    })
+    .catch((error) => {
+      console.error(error);
+      throw new Error("Internal server error");
+    });
 };
 
 const deleteClothes = (id) => {
-  return new Promise(function (resolve, reject) {
-    pool.query(
-      "DELETE FROM clothes WHERE clothes_id = $1",
-      [id],
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(`Clothes deleted with ID: ${id}`);
-      }
-    );
-  });
+  const query = "DELETE FROM clothes WHERE clothes_id = $1";
+  const values = [id];
+
+  return pool
+    .query(query, values)
+    .then(() => {
+      return `Clothes deleted with ID: ${id}`;
+    })
+    .catch((error) => {
+      console.error(error);
+      throw new Error("Internal server error");
+    });
 };
 
 const updateClothes = (id, body) => {
-  return new Promise(function (resolve, reject) {
-    const { name, color, size, stock, price } = body;
-    pool.query(
-      "UPDATE clothes SET name = $1, color = $2, size = $3, stock = $4, price = $5 WHERE clothes_id = $6 RETURNING *",
-      [name, color, size, stock, price, id],
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(`Clothes updated: ${JSON.stringify(results.rows[0])}`);
-        } else {
-          reject(new Error("No results found"));
-        }
-      }
-    );
-  });
+  const { name, color, size, stock, price } = body;
+  const query =
+    "UPDATE clothes SET name = $1, color = $2, size = $3, stock = $4, price = $5 WHERE clothes_id = $6 RETURNING *";
+  const values = [name, color, size, stock, price, id];
+
+  return pool
+    .query(query, values)
+    .then((results) => {
+      return `Clothes updated: ${JSON.stringify(results.rows[0])}`;
+    })
+    .catch((error) => {
+      console.error(error);
+      throw new Error("Internal server error");
+    });
 };
 
 module.exports = {

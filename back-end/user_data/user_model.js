@@ -1,11 +1,11 @@
-const Pool = require("pg").Pool;
+const { Pool } = require("pg");
+
+const connectionString =
+  "postgres://untimaug:VQdB62E2JcmSt0SJh5jHfZWt02sLueXO@rosie.db.elephantsql.com/untimaug";
 
 const pool = new Pool({
-  user: "my_user",
-  host: "localhost",
-  database: "clothing_database",
-  password: "root",
-  port: 5432,
+  connectionString: connectionString,
+  max: 20,
 });
 
 const role = "user";
@@ -14,7 +14,6 @@ const last_login_date = new Date();
 async function checkEmailExists(email) {
   try {
     const userWithEmail = await getUserByEmail(email);
-
     return userWithEmail !== null;
   } catch (error) {
     throw error;
@@ -23,44 +22,27 @@ async function checkEmailExists(email) {
 
 const getUserData = async () => {
   try {
-    return await new Promise(function (resolve, reject) {
-      pool.query("SELECT * FROM user_data", (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(results.rows);
-        } else {
-          reject(new Error("No results found"));
-        }
-      });
-    });
-  } catch (error_1) {
-    console.error(error_1);
+    const results = await pool.query("SELECT * FROM user_data");
+    return results.rows;
+  } catch (error) {
+    console.error(error);
     throw new Error("Internal server error");
   }
 };
 
 const getUserDataById = async (UserID) => {
   try {
-    return await new Promise(function (resolve, reject) {
-      pool.query(
-        "SELECT * FROM user_data WHERE user_id = $1",
-        [UserID],
-        (error, results) => {
-          if (error) {
-            reject(error);
-          }
-          if (results && results.rows.length > 0) {
-            resolve(results.rows[0]);
-          } else {
-            reject(new Error("No user found"));
-          }
-        }
-      );
-    });
-  } catch (error_1) {
-    console.error(error_1);
+    const results = await pool.query(
+      "SELECT * FROM user_data WHERE user_id = $1",
+      [UserID]
+    );
+    if (results.rows.length > 0) {
+      return results.rows[0];
+    } else {
+      throw new Error("No user found");
+    }
+  } catch (error) {
+    console.error(error);
     throw new Error("Internal server error");
   }
 };
@@ -71,20 +53,17 @@ const getUserByEmail = async (email) => {
       "SELECT * FROM user_data WHERE email = $1",
       [email]
     );
-
     if (results.rows.length > 0) {
       return results.rows[0];
-    } else {
-      throw new Error("No user found");
     }
   } catch (error) {
-    console.error("Error executing query:", error);
+    console.error(error);
     throw new Error("Internal server error");
   }
 };
 
-const addUser = (body) => {
-  return new Promise(function (resolve, reject) {
+const addUser = async (body) => {
+  try {
     const {
       first_name,
       last_name,
@@ -97,7 +76,8 @@ const addUser = (body) => {
       notes,
       creation_date,
     } = body;
-    pool.query(
+
+    const results = await pool.query(
       "INSERT INTO user_data (first_name, last_name, email, password, avatar_url, date_of_birth, address, phone_number, notes, creation_date, last_login_date, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
       [
         first_name,
@@ -112,37 +92,31 @@ const addUser = (body) => {
         creation_date,
         last_login_date,
         role,
-      ],
-      (error, results) => {
-        if (error) {
-          console.error(error);
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(
-            `A new user has been added: ${JSON.stringify(results.rows[0])}`
-          );
-        } else {
-          reject(new Error("No results found"));
-        }
-      }
+      ]
     );
-  });
+
+    if (results && results.rows) {
+      return `A new user has been added: ${JSON.stringify(results.rows[0])}`;
+    } else {
+      throw new Error("No results found");
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error("Internal server error");
+  }
 };
 
-const deleteUser = (id) => {
-  return new Promise(function (resolve, reject) {
-    pool.query(
+const deleteUser = async (id) => {
+  try {
+    const results = await pool.query(
       "DELETE FROM user_data WHERE user_id = $1",
-      [id],
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(`User deleted with ID: ${id}`);
-      }
+      [id]
     );
-  });
+    return `User deleted with ID: ${id}`;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Internal server error");
+  }
 };
 
 const updateUser = async (id, body) => {
@@ -186,7 +160,7 @@ const updateUser = async (id, body) => {
     }
   } catch (error) {
     console.error(error);
-    throw error;
+    throw new Error("Internal server error");
   }
 };
 

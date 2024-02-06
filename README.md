@@ -69,6 +69,10 @@ Explore, manage, and enjoy the enhanced experience of handling your clothing dat
 
 ## Features
 
+### Create Account
+
+Creating an account is a simple process where you enter basic details like email, username, and password on a platform's sign-up page. Additional security steps may be needed. Once you submit the details and activate the account through a confirmation email or code, you can access the platform's features. Remember to choose a strong password for account security.
+
 ### Sign In
 
 The **Sign In** feature provides a secure and straightforward authentication process for users. Easily access your clothing database by entering your credentials, ensuring a personalized and protected user experience.
@@ -92,6 +96,10 @@ Effortlessly manage your clothing data with the ability to Remove and Edit entri
 ### Adding New Clothes
 
 The **Adding New Clothes** feature streamlines the process of expanding your clothing collection. Access a user-friendly input form to effortlessly add details for new clothing items. Enhance your database with the latest additions to your wardrobe, ensuring a comprehensive and up-to-date collection.
+
+## Database
+
+Modifications implemented in the DataGrid and Forms seamlessly incorporate and refresh the database with new and updated information.
 
 ## License
 
