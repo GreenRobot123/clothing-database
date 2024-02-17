@@ -22,36 +22,7 @@ _Clothing Database UI_ enables users to explore, add, view, and manage clothing 
 
 This project utilizes PostgreSQL for database management. Please note that the website does not grant access to any database other than the one specified. To set up the database, follow these steps:
 
-1. Create a PostgreSQL database with the necessary tables.
-
-   ```sql
-   CREATE TABLE clothes (
-       clothes_id SERIAL PRIMARY KEY,
-       name VARCHAR(255) NOT NULL,
-       color VARCHAR(50) NOT NULL,
-       size VARCHAR(10) NOT NULL,
-       stock INT DEFAULT 0 NOT NULL,
-       price DECIMAL(10, 2) NOT NULL
-   );
-
-   CREATE TABLE user_data (
-       user_id SERIAL PRIMARY KEY,
-       first_name VARCHAR(50),
-       last_name VARCHAR(50),
-       email VARCHAR(100) NOT NULL UNIQUE,
-       password VARCHAR(255),
-       avatar_url VARCHAR(255),
-       date_of_birth DATE,
-       address VARCHAR(255),
-       phone_number VARCHAR(20),
-       notes TEXT,
-       creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-       last_login_date TIMESTAMP,
-       role VARCHAR(20)
-   );
-   ```
-
-2. **Installation:**
+1. **Installation:**
 
    ```bash
    npm install
