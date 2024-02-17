@@ -1,4 +1,4 @@
-import { HomePage, TasksPage, ProfilePage, FormPage } from './pages';
+import { HomePage, TasksPage, ProfilePage, FormPage, DashboardPage } from './pages';
 import { withNavigationWatcher } from './contexts/navigation';
 
 const routes = [
@@ -17,6 +17,10 @@ const routes = [
   {
     path: '/form',
     element: FormPage
+  }, 
+  {
+    path: '/dashboard',
+    element: DashboardPage
   }
 ];
 

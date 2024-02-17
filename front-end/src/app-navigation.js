@@ -20,4 +20,9 @@ export const navigation = [
     path: "/form",
     icon: "plus",
   },
+  {
+    text: "Dashboard",
+    path: "/dashboard",
+    icon: "datausage",
+  },
 ];
